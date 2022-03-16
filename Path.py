@@ -55,7 +55,7 @@ class Path():
 # https://en.wikipedia.org/wiki/Gradient_descent#Solution_of_a_non-linear_system
 
 
-# https://www.desmos.com/calculator/zwzhrrl7qv
+# https://www.desmos.com/calculator/ehohglgaod
 # 1. Implement full method
 # 2. Implement adaptation that cuts off when opposite wheel is at -v
 # 3. Implement adaptation that cuts off when opposive wheel is at 0
