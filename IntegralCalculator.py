@@ -80,6 +80,4 @@ class IntegralCalculator():
         print("X")
         #return x coordinate
 
-
-#0.25
 IntegralCalculator(DriveCharacterization(1,1,1,1))
