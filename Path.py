@@ -1,5 +1,4 @@
 from DegMath import atan2
-from typing import Tuple
 import pygame
 from DriveCharacterization import DriveCharacterization
 
@@ -23,7 +22,7 @@ class Point():
 
 # Translate between field coordinate and pygame display coordinates
 class Translate():
-    def toNative(rect: pygame.Rect, coords: Tuple[float, float]):
+    def toNative(rect: pygame.Rect, coords: tuple[float, float]):
         size = rect.size
         shift = rect.topleft
         return Point((coords[0]-shift[0])*fieldSize[0]/size[0], (size[1] - (coords[1]-shift[1]))*fieldSize[1]/size[1])
