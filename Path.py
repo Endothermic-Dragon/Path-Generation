@@ -4,11 +4,23 @@ import pygame
 
 fieldSize = (1646, 823) #centimeters
 
+# Convert any angle to a domain-restricted angle between (-180, 180] degrees
+def fixAngle(angle):
+    # Efficiently turn into a workable range between [0, 360)
+    rotationAngle %= 360
+
+    # Positive means clockwise rotation of robot
+    # Negative means counterclockwise rotation of robot
+    if rotationAngle > 180:
+        rotationAngle -= 360
+
+# Store point with x and y coordinates as an object
 class Point():
     def __init__(self, x: float, y: float):
         self.x = x
         self.y = y
 
+# Translate between field coordinate and pygame display coordinates
 class Translate():
     def toNative(rect: pygame.Rect, coords: Tuple[float, float]):
         size = rect.size
@@ -20,31 +32,28 @@ class Translate():
         shift = rect.topleft
         return (point.x*size[0]/fieldSize[0] + shift[0], (fieldSize[1] - point.y)*size[1]/fieldSize[1] + shift[1])
 
+# Setup with points and precalculated properties in a list before performing gradient descent
 class Path():
+    # Initialize with an empty list of points
     def __init__(self):
         self.waypoints = []
+        # Easily fetch length of array (not sure how efficient native fetching is)
         self.waypointsLength = 0
 
+    # Append point into list
     def append(self, point: Point):
         self.waypoints.append(point)
         self.waypointsLength += 1
 
+        # Set angle of point in 2D space (standard position)
         if self.waypointsLength > 1:
-            self.waypoints[-2].angle = self.getAngle(*self.waypoints[-2:])
+            self.waypoints[-2].angle = fixAngle(self.getAngle(*self.waypoints[-2:]))
 
+        # Set turn angle for robot at point
         if self.waypointsLength > 2:
-            rotationAngle = self.waypoints[-2].angle - self.waypoints[-3].angle
+            self.waypoints[-2].rotationAngle = self.waypoints[-2].angle - self.waypoints[-3].angle
 
-            # Positive means clockwise rotation of robot
-            # Negative means counterclockwise rotation of robot
-            if rotationAngle > 180:
-                rotationAngle -= 360
-            elif rotationAngle < -180:
-                rotationAngle += 360
-
-            rotationAngle = rotationAngle - 360 if rotationAngle > 180 else rotationAngle
-            self.waypoints[-2].rotationAngle = rotationAngle
-
+    # Return angle between two points, with respect to the first point, in standard position
     def getAngle(self, point1: Point, point2: Point):
         distance = [point2.y - point1.y, point2.x - point1.x]
         return atan2(*distance)
