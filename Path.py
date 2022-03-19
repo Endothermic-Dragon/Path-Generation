@@ -1,5 +1,4 @@
-from math import atan2, pi
-from multiprocessing.sharedctypes import Value
+from DegMath import atan2
 from typing import Tuple
 import pygame
 
@@ -21,35 +20,36 @@ class Translate():
         shift = rect.topleft
         return (point.x*size[0]/fieldSize[0] + shift[0], (fieldSize[1] - point.y)*size[1]/fieldSize[1] + shift[1])
 
-class Angle():
-    def __init__(self, angle: float, inputType: str):
-        if inputType.lower() in ["d", "deg", "degrees"]:
-            angle = angle % 360
-            self.angleDeg = angle
-            self.angleRad = angle * pi / 180
-        elif inputType.lower() in ["r", "rad", "radians"]:
-            angle = angle % (2*pi)
-            self.angleDeg = angle * 180 / pi
-            self.angleRad = angle
-        else:
-            raise ValueError("Invalid unit for angle.")
-
-def subtractAngles(self, other: Angle):
-    return Angle(self.angleDeg - other.angleDeg, "d")
-
-Angle.__sub__ = subtractAngles
-
 class Path():
     def __init__(self):
         self.waypoints = []
+        self.waypointsLength = 0
 
     def append(self, point: Point):
         self.waypoints.append(point)
+        self.waypointsLength += 1
+
+        if self.waypointsLength > 1:
+            self.waypoints[-2].angle = self.getAngle(*self.waypoints[-2:])
+
+        if self.waypointsLength > 2:
+            rotationAngle = self.waypoints[-2].angle - self.waypoints[-3].angle
+
+            # Positive means clockwise rotation of robot
+            # Negative means counterclockwise rotation of robot
+            if rotationAngle > 180:
+                rotationAngle -= 360
+            elif rotationAngle < -180:
+                rotationAngle += 360
+
+            rotationAngle = rotationAngle - 360 if rotationAngle > 180 else rotationAngle
+            self.waypoints[-2].rotationAngle = rotationAngle
 
     def getAngle(self, point1: Point, point2: Point):
-        distance = [point2.x - point1.x, point2.y - point1.y]
-        angle = Angle(atan2(*distance[::-1]), "r")
-        return angle.angleDeg
+        distance = [point2.y - point1.y, point2.x - point1.x]
+        return atan2(*distance)
+
+
 
 # Use Gradient Descent to solve all systems
 # https://en.wikipedia.org/wiki/Gradient_descent#Solution_of_a_non-linear_system

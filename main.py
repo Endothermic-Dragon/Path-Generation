@@ -26,7 +26,6 @@ while True:
             if field.collidepoint(mousePos):
                 pygame.draw.circle(screen, (0, 0, 0), mousePos, 5, 5)
                 path.append(Translate.toNative(field, mousePos))
-                
             else:
                 breakLoop = True
     if breakLoop:
