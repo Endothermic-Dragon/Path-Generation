@@ -1,6 +1,7 @@
 from DegMath import atan2
 from typing import Tuple
 import pygame
+from DriveCharacterization import DriveCharacterization
 
 fieldSize = (1646, 823) #centimeters
 
@@ -35,7 +36,8 @@ class Translate():
 # Setup with points and precalculated properties in a list before performing gradient descent
 class Path():
     # Initialize with an empty list of points
-    def __init__(self):
+    def __init__(self, robotCharacteristics: DriveCharacterization):
+        self.robotCharacteristics = robotCharacteristics
         self.waypoints = []
         # Easily fetch length of array (not sure how efficient native fetching is)
         self.waypointsLength = 0

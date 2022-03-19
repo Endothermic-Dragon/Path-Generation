@@ -1,10 +1,13 @@
 from time import sleep
 import pygame
 from Path import Path, Translate
+from DriveCharacterization import DriveCharacterization
+
+robotCharacteristics = DriveCharacterization(1, 1, 1, 1, 1)
 
 path = Path()
 
-pygame.init()
+pygame.init(robotCharacteristics)
 
 #blit to make it resizable
 screen = pygame.display.set_mode([1200, 800])
