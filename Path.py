@@ -7,12 +7,14 @@ fieldSize = (1646, 823) #centimeters
 # Convert any angle to a domain-restricted angle between (-180, 180] degrees
 def fixAngle(angle):
     # Efficiently turn into a workable range between [0, 360)
-    rotationAngle %= 360
+    angle %= 360
 
     # Positive means clockwise rotation of robot
     # Negative means counterclockwise rotation of robot
-    if rotationAngle > 180:
-        rotationAngle -= 360
+    if angle > 180:
+        angle -= 360
+
+    return angle
 
 # Store point with x and y coordinates as an object
 class Point():

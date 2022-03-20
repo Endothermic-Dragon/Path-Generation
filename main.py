@@ -3,11 +3,10 @@ import pygame
 from Path import Path, Translate
 from DriveCharacterization import DriveCharacterization
 
-robotCharacteristics = DriveCharacterization(1, 1, 1, 1, 1)
+robotCharacteristics = DriveCharacterization(1, 1, 1, 1)
+path = Path(robotCharacteristics)
 
-path = Path()
-
-pygame.init(robotCharacteristics)
+pygame.init()
 
 #blit to make it resizable
 screen = pygame.display.set_mode([1200, 800])

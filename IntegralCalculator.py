@@ -14,7 +14,8 @@ class IntegralCalculator():
         self.maxT = max(self.quarterTurn, 2 * v / a)
 
         # Use 'middle point' to form quadratic
-        count = ceil(self.quarterTurn / 0.005) # Make divisor smaller for more accuracy
+        # Make divisor smaller for more accuracy (currently ≈ 10 digits)
+        count = ceil(self.quarterTurn / 0.03)
         self.dt = self.quarterTurn / count
 
         points = []
@@ -36,29 +37,16 @@ class IntegralCalculator():
             self.curves.append((xCurve, yCurve))
         
         self.sectionAreas = []
-        # Precalculated integral sections
         for i in range(count):
-            curve = self.curves[i]
-            curveX = self.curves[i][0]
-            curveY = self.curves[i][1]
-
             self.sectionAreas.append((\
-                curveX[0] / 3 * ((self.dt * (i+1))**3 - (self.dt * i)**3)\
-                + curveX[1] / 2 * ((self.dt * (i+1))**2 - (self.dt * i)**2)\
-                + curveX[2] / 1 * ((self.dt * (i+1))**1 - (self.dt * i)**1),\
-                curveY[0] / 3 * ((self.dt * (i+1))**3 - (self.dt * i)**3)\
-                + curveY[1] / 2 * ((self.dt * (i+1))**2 - (self.dt * i)**2)\
-                + curveY[2] / 1 * ((self.dt * (i+1))**1 - (self.dt * i)**1)\
+                half_dt * (points[i*2][0] + 4*points[i*2+1][0] + points[i*2+2][0]) / 3,\
+                half_dt * (points[i*2][1] + 4*points[i*2+1][1] + points[i*2+2][1]) / 3,\
             ))
         
         areas = []
         for i in self.sectionAreas:
-            areas.append(i[1])
+            areas.append(i[0])
         print(sum(areas))
-
-
-
-        #end
 
     def solveQuadratic(self, t: list[float, float, float], y: list[float, float, float]):
         eq1 = [(t[1]**2 - t[0]**2, t[1] - t[0]), y[1] - y[0]]
@@ -80,4 +68,4 @@ class IntegralCalculator():
         print("X")
         #return x coordinate
 
-IntegralCalculator(DriveCharacterization(1,1,1,1))
+IntegralCalculator(DriveCharacterization(7.4,2.3,1.7,1))
