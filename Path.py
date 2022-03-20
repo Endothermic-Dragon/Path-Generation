@@ -68,17 +68,15 @@ class Path():
 
 
 # https://www.desmos.com/calculator/ehohglgaod
-# 1. Implement full method
+# 1. [Completed] Implement full method
 # 2. Implement adaptation that cuts off when opposite wheel is at -v
-# 3. Implement adaptation that cuts off when opposive wheel is at 0
+# 3. [Maybe] Implement adaptation that cuts off when opposive wheel is at 0
 # 4. [Maybe] Implement backup using Cornu/Euler spiral?
 # 5. Implement regular Hermite Spline for intersection
-
-
-# Custom method details
-# y value is the radius
 
 # Equations for 3 points:
 #     f(θ + θ_1 + θ_2) = r
 #     tan(θ_1) * d_1 = r
 #     tan(θ_2) * d_2 = r
+
+# Expand concepts to a variable number of points
