@@ -93,8 +93,8 @@ class IntegralCalculator():
 
         t = sqrt(2 * w * halfAngle / a)
 
-        travelDistance = self.getX(t)
+        #travelDistance = self.getX(t)
         radius = self.getY(t)
-        angleDerivative = (self.getYslope(t) * sqrt(w / (2*a*halfAngle))) * pi / 360
+        #angleDerivative = (self.getYslope(t) * sqrt(w / (2*a*halfAngle))) * pi / 360
 
-        return (radius, angleDerivative, travelDistance)
+        return radius #, angleDerivative, travelDistance)

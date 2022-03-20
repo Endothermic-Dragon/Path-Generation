@@ -1,20 +1,9 @@
 from DegMath import atan2
 import pygame
 from DriveCharacterization import DriveCharacterization
+from GradientDescent import GradientDescent
 
 fieldSize = (1646, 823) #centimeters
-
-# Convert any angle to a domain-restricted angle between (-180, 180] degrees
-def fixAngle(angle):
-    # Efficiently turn into a workable range between [0, 360)
-    angle %= 360
-
-    # Positive means clockwise rotation of robot
-    # Negative means counterclockwise rotation of robot
-    if angle > 180:
-        angle -= 360
-
-    return angle
 
 # Store point with x and y coordinates as an object
 class Point():
@@ -42,6 +31,9 @@ class Path():
         self.waypoints = []
         # Easily fetch length of array (not sure how efficient native fetching is)
         self.waypointsLength = 0
+        self.lengths = []
+        self.angles = []
+        self.rotationAngles = []
 
     # Append point into list
     def append(self, point: Point):
@@ -50,16 +42,24 @@ class Path():
 
         # Set angle of point in 2D space (standard position)
         if self.waypointsLength > 1:
-            self.waypoints[-2].angle = fixAngle(self.getAngle(*self.waypoints[-2:]))
+            length, angle = self.getAngleAndLength(*self.waypoints[-2:])
+            self.angles.append(angle)
+            self.lengths.append(length / 100)
 
         # Set turn angle for robot at point
         if self.waypointsLength > 2:
-            self.waypoints[-2].rotationAngle = self.waypoints[-2].angle - self.waypoints[-3].angle
+            self.rotationAngles.append(self.angles[-1] - self.angles[-2])
 
     # Return angle between two points, with respect to the first point, in standard position
-    def getAngle(self, point1: Point, point2: Point):
+    def getAngleAndLength(self, point1: Point, point2: Point):
         distance = [point2.y - point1.y, point2.x - point1.x]
-        return atan2(*distance)
+        return (atan2(*distance), (distance[0]**2 + distance[1]**2)**0.5)
+    
+    def drawPath(self):
+        solver = GradientDescent(self.robotCharacteristics, self.lengths, self.rotationAngles)
+        for i in range(1000):
+            solver.step()
+        print(solver.step())
 
 
 

@@ -34,5 +34,7 @@ while True:
         break
     pygame.display.flip()
 
+path.drawPath()
+
 while True:
     sleep(0.1)
