@@ -42,7 +42,7 @@ class Path():
 
         # Set angle of point in 2D space (standard position)
         if self.waypointsLength > 1:
-            length, angle = self.getAngleAndLength(*self.waypoints[-2:])
+            angle, length = self.getAngleAndLength(*self.waypoints[-2:])
             self.angles.append(angle)
             self.lengths.append(length / 100)
 
@@ -59,7 +59,10 @@ class Path():
         solver = GradientDescent(self.robotCharacteristics, self.lengths, self.rotationAngles)
         for i in range(1000):
             solver.step()
-        print(solver.step())
+        print(self.rotationAngles)
+        print(solver.adjustAngles)
+        print(solver.radii)
+        print(solver.adjustedTurnAngles)
 
 
 

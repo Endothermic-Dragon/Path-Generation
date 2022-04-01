@@ -43,19 +43,21 @@ class GradientDescent:
         for i in range(len(turnAngles)):
             self.adjustedTurnAngles[i] = self.fixAngle(self.turnAngles[i] + self.adjustAngles[i+1] - self.adjustAngles[i])
 
+        radii.append(0)
         for angle in self.adjustedTurnAngles:
             if angle >= 0:
                 radii.append(integralCalculator.getMeasurements(angle))
             else:
                 radii.append(-integralCalculator.getMeasurements(-angle))
-        
+        radii.append(0)
+        self.radii = radii
+        #print(radii)
+
         newAngles = []
-        newAngles.append(asin((radii[0])/distances[0]))
         for i in range(len(radii) - 1):
-            newAngles.append(asin((radii[i+1] - radii[i])/distances[i+1]))
-        newAngles.append(asin((-radii[-1])/distances[-1]))
+            newAngles.append(asin((radii[i] - radii[i+1])/distances[i]))
 
         for i in range(len(adjustAngles)):
             self.adjustAngles[i] = (adjustAngles[i] + newAngles[i]) / 2
         
-        return adjustAngles
+        #return adjustAngles
