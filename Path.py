@@ -1,4 +1,4 @@
-from DegMath import atan2
+from DegMath import atan2, sin, cos
 import pygame
 from DriveCharacterization import DriveCharacterization
 from GradientDescent import GradientDescent
@@ -44,7 +44,7 @@ class Path():
         if self.waypointsLength > 1:
             angle, length = self.getAngleAndLength(*self.waypoints[-2:])
             self.angles.append(angle % 360)
-            self.lengths.append(length / 100)
+            self.lengths.append(length / 100) #SI Units
 
         # Set turn angle for robot at point
         if self.waypointsLength > 2:
@@ -56,6 +56,7 @@ class Path():
         return (atan2(*distance), (distance[0]**2 + distance[1]**2)**0.5)
     
     def drawPath(self):
+        print(self.lengths)
         solver = GradientDescent(self.robotCharacteristics, self.lengths, self.rotationAngles)
 
         # Code used to check how many iterations necessary
@@ -75,8 +76,20 @@ class Path():
 
         for i in range(100):
             solver.step()
-        self.radii = solver.radii
-        self.turnAngles = map(lambda angle: angle % 360, solver.adjustedTurnAngles)
+
+        coords = []
+
+        for i in range(len(self.lengths)):
+            radii = solver.radii[i:i+2]
+            turn = self.angles[i] + solver.adjustAngles[i] - 90
+            components = [sin(turn), cos(turn)]
+            loopCoords = [Point(self.waypoints[i].x + radii[0] * components[1] * 100, self.waypoints[i].y + radii[0] * components[0] * 100),\
+                  Point(self.waypoints[i+1].x + radii[1] * components[1] * 100, self.waypoints[i+1].y + radii[1] * components[0] * 100)]
+
+            coords.append(loopCoords[0])
+            coords.append(loopCoords[1])
+
+        return coords
 
 
 

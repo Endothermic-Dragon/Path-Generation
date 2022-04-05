@@ -34,7 +34,13 @@ while True:
         break
     pygame.display.flip()
 
-path.drawPath()
+coords = path.drawPath()
+
+for i in range(len(coords)):
+    coords[i] = Translate.toPygame(field, coords[i])
+
+pygame.draw.lines(screen, (0, 0, 0), False, coords)
+pygame.display.flip()
 
 while True:
     sleep(0.1)
