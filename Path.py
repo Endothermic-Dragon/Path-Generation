@@ -43,7 +43,7 @@ class Path():
         # Set angle of point in 2D space (standard position)
         if self.waypointsLength > 1:
             angle, length = self.getAngleAndLength(*self.waypoints[-2:])
-            self.angles.append(angle)
+            self.angles.append(angle % 360)
             self.lengths.append(length / 100)
 
         # Set turn angle for robot at point
@@ -57,12 +57,26 @@ class Path():
     
     def drawPath(self):
         solver = GradientDescent(self.robotCharacteristics, self.lengths, self.rotationAngles)
-        for i in range(1000):
+
+        # Code used to check how many iterations necessary
+        # old = ""
+        # count = 0
+        # while True:
+        #     count += 1
+        #     solver.step()
+        #     new = "".join([str(i) for i in solver.adjustedTurnAngles])\
+        #         + "".join([str(i) for i in solver.radii])
+        #     if new == old:
+        #         print(count)
+        #         break
+        #     else:
+        #         old = new
+        # print(count)
+
+        for i in range(100):
             solver.step()
-        print(self.rotationAngles)
-        print(solver.adjustAngles)
-        print(solver.radii)
-        print(solver.adjustedTurnAngles)
+        self.radii = solver.radii
+        self.turnAngles = map(lambda angle: angle % 360, solver.adjustedTurnAngles)
 
 
 
@@ -74,7 +88,7 @@ class Path():
 # 1. [Completed] Implement full method
 # 2. Implement adaptation that cuts off when opposite wheel is at -v
 # 3. [Maybe] Implement adaptation that cuts off when opposive wheel is at 0
-# 4. [Maybe] Implement backup using Cornu/Euler spiral?
+# 4. [Deleted] Implement backup using Cornu/Euler spiral?
 # 5. Implement regular Hermite Spline for intersection
 
 # Equations for 3 points:

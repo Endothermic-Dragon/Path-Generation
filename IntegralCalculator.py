@@ -74,12 +74,12 @@ class IntegralCalculator():
 
         return displacement
     
-    def getYslope(self, t):
-        w = self.robotCharacteristics.w
-        v = self.robotCharacteristics.v
-        a = self.robotCharacteristics.a
+    # def getYslope(self, t):
+    #     w = self.robotCharacteristics.w
+    #     v = self.robotCharacteristics.v
+    #     a = self.robotCharacteristics.a
 
-        return (v - a*t/2) * sin(a * t**2 / 2 / w)
+    #     return (v - a*t/2) * sin(a * t**2 / 2 / w)
     
     def getMeasurements(self, degAngle):
         if not (0 <= degAngle <= 180):

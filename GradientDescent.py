@@ -22,22 +22,11 @@ class GradientDescent:
 
         return angle
 
-#    def cost(self):
-#        integralCalculator = self.integralCalculator
-#        for angle in self.adjustedTurnAngles:
-#            integralCalculator.getMeasurements(angle)
-
-# Equations for 3 points:
-#     f(θ + θ_1 + θ_2) = r
-#     tan(θ_1) * d_1 = r
-#     tan(θ_2) * d_2 = r
-
     def step(self):
         distances = self.distances
         turnAngles = self.turnAngles
         adjustAngles = self.adjustAngles
         radii = []
-        angleGradient = []
         integralCalculator = self.integralCalculator
 
         for i in range(len(turnAngles)):
@@ -51,13 +40,11 @@ class GradientDescent:
                 radii.append(-integralCalculator.getMeasurements(-angle))
         radii.append(0)
         self.radii = radii
-        #print(radii)
 
         newAngles = []
         for i in range(len(radii) - 1):
+            # Check if too short
             newAngles.append(asin((radii[i] - radii[i+1])/distances[i]))
 
         for i in range(len(adjustAngles)):
             self.adjustAngles[i] = (adjustAngles[i] + newAngles[i]) / 2
-        
-        #return adjustAngles
