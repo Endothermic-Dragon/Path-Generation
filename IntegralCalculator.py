@@ -1,6 +1,7 @@
 from math import ceil, floor, pi, sqrt, sin, cos
-from typing import List
+from DegMath import atan2
 from DriveCharacterization import DriveCharacterization
+import matplotlib.pyplot as plt
 
 class IntegralCalculator():
     def __init__(self, robotCharacteristics: DriveCharacterization):
@@ -112,38 +113,43 @@ class IntegralCalculator():
 
         return radius
     
-    def getCoord(self, degAngle):
-        halfAngle = self.halfTurnAngle(degAngle)
+    def getCoord(self, halfDegAngle):
+        halfAngle = halfDegAngle * pi / 180
         t = min(self.thetaToTime(halfAngle), self.maxT)
 
         return (self.getX(t) * 100, self.getY(t) * 100)
 
     def getCoords(self, degAngle, turnAngle, translate):
-        print(degAngle)
+        turnDirection = 1 if degAngle >= 0 else -1
+        degAngle = abs(degAngle)
         halfAngle = self.halfTurnAngle(degAngle)
-        theta = min(halfAngle, self.timeToTheta(self.maxT))
+        theta = min(halfAngle, self.timeToTheta(self.maxT)) * 180 / pi
 
         coords = []
-
-        for sampleDegAngle in range(int(theta // 1)):
-            coords.append(self.getCoord(sampleDegAngle))
-
-        if theta // 1 != theta:
-            coords.append(self.getCoord(theta))
-        
         lastCoord = self.getCoord(theta)
 
+        for sampleDegAngle in range(2*int(theta // 1)):
+            coord = self.getCoord(sampleDegAngle / 2)
+            coords.append([coord[0] - lastCoord[0], coord[1] - lastCoord[1]])
+
+        if int(theta // 1) != theta:
+            coords.append([0,0])
+
+        for i in range(len(coords) - 1):
+            r = (coords[i][0]**2 + coords[i][1]**2)**0.5
+            arg = (atan2(coords[i][1], coords[i][0]) - theta) * pi / 180
+            coords[i] = (r * cos(arg), r * sin(arg) * turnDirection)
+
+        reversedCoords = [(-coords[-i][0], coords[-i][1]) for i in range(2,len(coords))]
+
+        coords = coords + list(reversedCoords)
+
         for i in range(len(coords)):
-            coords[i] = [(coords[i][0] - lastCoord[0]) * cos(-theta * pi / 180),\
-                (coords[i][1] - lastCoord[1]) * sin(-theta * pi / 180)]
-        
-        reversedCoords = [(-coords[-i][0], coords[-i][1]) for i in range(len(coords) - 1)]
-        
-        allCoords = coords + list(reversedCoords)
+            try:
+                r = (coords[i][0]**2 + coords[i][1]**2)**0.5
+                arg = (atan2(coords[i][1], coords[i][0]) + turnAngle) * pi / 180
+                coords[i] = [r * cos(arg) + translate.x, r * sin(arg) + translate.y]
+            except:
+                coords[i] = [translate.x, translate.x]
 
-        for i in range(len(allCoords)):
-            coord = allCoords[i]
-            allCoords[i] = (coord[0] * cos(turnAngle * pi / 180) + translate.x,\
-                coord[1] * sin(turnAngle * pi / 180) + translate.y)
-
-        return allCoords
+        return coords

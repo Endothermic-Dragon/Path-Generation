@@ -5,7 +5,6 @@ def atan2(y, x):
     return rad_atan2(y, x) * 180 / pi
 
 def asin(val):
-    #print(val)
     return rad_asin(val) * 180 / pi
 
 def sin(val):

@@ -57,7 +57,6 @@ class Path():
         return (atan2(*distance), (distance[0]**2 + distance[1]**2)**0.5)
     
     def drawPath(self):
-        print(self.lengths)
         solver = GradientDescent(self.robotCharacteristics, self.lengths, self.rotationAngles)
 
         # Code used to check how many iterations necessary
@@ -73,7 +72,6 @@ class Path():
         #         break
         #     else:
         #         old = new
-        # print(count)
 
         for i in range(100):
             solver.step()
@@ -86,7 +84,7 @@ class Path():
                 avgAngle -= 180
                 avgAngle %= 360
             
-            turnAngle = abs(solver.adjustedTurnAngles[i])
+            turnAngle = solver.adjustedTurnAngles[i]
             point = self.waypoints[i+1]
             
             loopCoords = solver.integralCalculator.getCoords(turnAngle, avgAngle, point)
