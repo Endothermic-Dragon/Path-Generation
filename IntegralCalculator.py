@@ -145,11 +145,8 @@ class IntegralCalculator():
         coords = coords + list(reversedCoords)
 
         for i in range(len(coords)):
-            try:
-                r = (coords[i][0]**2 + coords[i][1]**2)**0.5
-                arg = (atan2(coords[i][1], coords[i][0]) + turnAngle) * pi / 180
-                coords[i] = [r * cos(arg) + translate.x, r * sin(arg) + translate.y]
-            except:
-                coords[i] = [translate.x, translate.x]
+            r = (coords[i][0]**2 + coords[i][1]**2)**0.5
+            arg = (atan2(coords[i][1], coords[i][0]) + turnAngle) * pi / 180
+            coords[i] = [r * cos(arg) + translate.x, r * sin(arg) + translate.y]
 
         return coords
