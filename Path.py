@@ -1,3 +1,4 @@
+from typing import List
 from DegMath import atan2, sin, cos
 import pygame
 from DriveCharacterization import DriveCharacterization
@@ -77,19 +78,41 @@ class Path():
         for i in range(100):
             solver.step()
 
-        coords = []
+        coords = [[self.waypoints[0].x, self.waypoints[0].y]]
 
-        for i in range(len(self.lengths)):
-            radii = solver.radii[i:i+2]
-            turn = self.angles[i] + solver.adjustAngles[i] - 90
-            components = [sin(turn), cos(turn)]
-            loopCoords = [Point(self.waypoints[i].x + radii[0] * components[1] * 100, self.waypoints[i].y + radii[0] * components[0] * 100),\
-                  Point(self.waypoints[i+1].x + radii[1] * components[1] * 100, self.waypoints[i+1].y + radii[1] * components[0] * 100)]
+        for i in range(len(self.rotationAngles)):
+            avgAngle = (self.angles[i+1] + self.angles[i]) / 2
+            if abs(self.angles[i] - avgAngle) > 90:
+                avgAngle -= 180
+                avgAngle %= 360
+            
+            turnAngle = abs(solver.adjustedTurnAngles[i])
+            point = self.waypoints[i+1]
+            
+            loopCoords = solver.integralCalculator.getCoords(turnAngle, avgAngle, point)
+            coords = coords + loopCoords
+        
+        coords = coords + [[self.waypoints[-1].x, self.waypoints[-1].y]]
 
-            coords.append(loopCoords[0])
-            coords.append(loopCoords[1])
+        for i in range(len(coords)):
+            coords[i] = Point(coords[i][0], coords[i][1])
 
         return coords
+
+
+        # coords = []
+
+        # for i in range(len(self.lengths)):
+        #     radii = solver.radii[i:i+2]
+        #     turn = self.angles[i] + solver.adjustAngles[i] - 90
+        #     components = [sin(turn), cos(turn)]
+        #     loopCoords = [Point(self.waypoints[i].x + radii[0] * components[1] * 100, self.waypoints[i].y + radii[0] * components[0] * 100),\
+        #           Point(self.waypoints[i+1].x + radii[1] * components[1] * 100, self.waypoints[i+1].y + radii[1] * components[0] * 100)]
+
+        #     coords.append(loopCoords[0])
+        #     coords.append(loopCoords[1])
+
+        # return coords
 
 
 

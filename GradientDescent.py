@@ -35,9 +35,9 @@ class GradientDescent:
         radii.append(0)
         for angle in self.adjustedTurnAngles:
             if angle >= 0:
-                radii.append(integralCalculator.getMeasurements(angle))
+                radii.append(integralCalculator.getRadius(angle))
             else:
-                radii.append(-integralCalculator.getMeasurements(-angle))
+                radii.append(-integralCalculator.getRadius(-angle))
         radii.append(0)
         self.radii = radii
 

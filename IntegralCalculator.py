@@ -1,4 +1,5 @@
 from math import ceil, floor, pi, sqrt, sin, cos
+from typing import List
 from DriveCharacterization import DriveCharacterization
 
 class IntegralCalculator():
@@ -81,20 +82,68 @@ class IntegralCalculator():
 
     #     return (v - a*t/2) * sin(a * t**2 / 2 / w)
     
-    def getMeasurements(self, degAngle):
+    def thetaToTime(self, theta):
+        w = self.robotCharacteristics.w
+        a = self.robotCharacteristics.a
+        return sqrt(2 * w * theta / a)
+    
+    def timeToTheta(self, time):
+        w = self.robotCharacteristics.w
+        a = self.robotCharacteristics.a
+        return (time**2 * a / 2 / w)
+
+    def overflowTheta(self, degAngle):
+        if self.thetaToTime(self.halfTurnAngle(degAngle)) < self.maxT:
+            return 0
+        return (self.thetaToTime(self.halfTurnAngle(degAngle)) - self.maxT) * 2
+
+    def halfTurnAngle(self, degAngle):
         if not (0 <= degAngle <= 180):
             raise ValueError("Invalid angle value, must be between 0 and 180, in degrees.")
         
         radAngle = degAngle * pi / 180
-        halfAngle = radAngle / 2
+        return radAngle / 2
 
-        w = self.robotCharacteristics.w
-        a = self.robotCharacteristics.a
+    def getRadius(self, degAngle):
+        halfAngle = self.halfTurnAngle(degAngle)
+        t = min(self.thetaToTime(halfAngle), self.maxT)
 
-        t = sqrt(2 * w * halfAngle / a)
-
-        #travelDistance = self.getX(t)
         radius = self.getY(t)
-        #angleDerivative = (self.getYslope(t) * sqrt(w / (2*a*halfAngle))) * pi / 360
 
-        return radius #, angleDerivative, travelDistance)
+        return radius
+    
+    def getCoord(self, degAngle):
+        halfAngle = self.halfTurnAngle(degAngle)
+        t = min(self.thetaToTime(halfAngle), self.maxT)
+
+        return (self.getX(t) * 100, self.getY(t) * 100)
+
+    def getCoords(self, degAngle, turnAngle, translate):
+        print(degAngle)
+        halfAngle = self.halfTurnAngle(degAngle)
+        theta = min(halfAngle, self.timeToTheta(self.maxT))
+
+        coords = []
+
+        for sampleDegAngle in range(int(theta // 1)):
+            coords.append(self.getCoord(sampleDegAngle))
+
+        if theta // 1 != theta:
+            coords.append(self.getCoord(theta))
+        
+        lastCoord = self.getCoord(theta)
+
+        for i in range(len(coords)):
+            coords[i] = [(coords[i][0] - lastCoord[0]) * cos(-theta * pi / 180),\
+                (coords[i][1] - lastCoord[1]) * sin(-theta * pi / 180)]
+        
+        reversedCoords = [(-coords[-i][0], coords[-i][1]) for i in range(len(coords) - 1)]
+        
+        allCoords = coords + list(reversedCoords)
+
+        for i in range(len(allCoords)):
+            coord = allCoords[i]
+            allCoords[i] = (coord[0] * cos(turnAngle * pi / 180) + translate.x,\
+                coord[1] * sin(turnAngle * pi / 180) + translate.y)
+
+        return allCoords
