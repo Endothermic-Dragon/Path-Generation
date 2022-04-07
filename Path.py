@@ -79,7 +79,7 @@ class Path():
         coords = [[self.waypoints[0].x, self.waypoints[0].y]]
 
         for i in range(len(self.rotationAngles)):
-            avgAngle = (self.angles[i+1] + self.angles[i]) / 2
+            avgAngle = (self.angles[i+1] + self.angles[i] + solver.adjustAngles[i] + solver.adjustAngles[i+1]) / 2
             if abs(self.angles[i] - avgAngle) > 90:
                 avgAngle -= 180
                 avgAngle %= 360
@@ -98,7 +98,7 @@ class Path():
         return coords
 
 
-        # coords = []
+        # coords2 = []
 
         # for i in range(len(self.lengths)):
         #     radii = solver.radii[i:i+2]
@@ -107,10 +107,10 @@ class Path():
         #     loopCoords = [Point(self.waypoints[i].x + radii[0] * components[1] * 100, self.waypoints[i].y + radii[0] * components[0] * 100),\
         #           Point(self.waypoints[i+1].x + radii[1] * components[1] * 100, self.waypoints[i+1].y + radii[1] * components[0] * 100)]
 
-        #     coords.append(loopCoords[0])
-        #     coords.append(loopCoords[1])
+        #     coords2.append(loopCoords[0])
+        #     coords2.append(loopCoords[1])
 
-        # return coords
+        # return coords + coords2[::-1]
 
 
 
