@@ -120,10 +120,11 @@ class Path():
 
 # https://www.desmos.com/calculator/ehohglgaod
 # 1. [Completed] Implement full method
-# 2. Implement adaptation that cuts off when opposite wheel is at -v
-# 3. [Maybe] Implement adaptation that cuts off when opposive wheel is at 0
-# 4. [Deleted] Implement backup using Cornu/Euler spiral?
-# 5. Implement regular Hermite Spline for intersection
+# 2. [Completed] Implement adaptation that cuts off when opposite wheel is at -v
+# 3. Splice into continuous time and acceleration values
+# 4. Identify sections that need to be calculated via Hermite Splines
+# 5. Implement regular Hermite Spline (curvature, heading, position) for intersection
+# 6. Turn Hermite Splines into motion profiles
 
 # Equations for 3 points:
 #     f(θ + θ_1 + θ_2) = r
