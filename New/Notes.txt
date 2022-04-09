@@ -1,0 +1,15 @@
+Create HTML webpage setup
+    a. Make it look decent
+    b. Make functioning canvas and elements
+    c. Create sample button to convert to actual coordinates
+    d. Send back to python server, wait for response
+
+Make python server send response
+    a. First send dummy response, check if received
+    b. Implement whole drawing algorithm program thing
+    c. Send data in JSON format
+
+After:
+    a. For too short lengthwise or exception with radii, interpolate with Hermite splines
+        i. Gradient descent to get headings automatically
+    b. Use shapely for dealing with points, shapes, intersections, etc. (objects on field)
