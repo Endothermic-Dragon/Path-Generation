@@ -1,7 +1,7 @@
 import pygame
 from math import degrees, radians
 
-# Custom
+# Global variables
 import Global
 
 # Store point as object, accessible by index or attribute
@@ -42,6 +42,7 @@ class Translate():
             [point[i] * size[i]/fieldSize[i] + shift[i] for i in [0,1]]
         )
 
+# Easily deal with angles
 class Angle():
     def __init__(self, angle: float, angleType: str) -> None:
         angleType = angleType.lower()

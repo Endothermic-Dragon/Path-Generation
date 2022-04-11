@@ -1,7 +1,6 @@
 from math import ceil, floor, pi, sqrt, sin, cos
 from DegMath import atan2
 from DriveCharacterization import DriveCharacterization
-import matplotlib.pyplot as plt
 
 class IntegralCalculator():
     def __init__(self, robotCharacteristics: DriveCharacterization):
@@ -13,6 +12,7 @@ class IntegralCalculator():
 
         self.quarterTurn = sqrt(pi * w / a)
         self.maxT = max(self.quarterTurn, 2 * v / a)
+
 
         # Use 'middle point' to form quadratic
         # Make divisor smaller for more accuracy (currently ≈ 10 digits)
