@@ -19,12 +19,19 @@ class IntegralCalculator():
         a = self.robotCharacteristics.a
 
         self.quarterTurn = sqrt(pi * w / a)
-        self.maxTurnTime = max(self.quarterTurn, 2 * v / a)
+        self.maxTurnTime = min(self.quarterTurn, 2 * v / a)
+
+        # Check max turn time
+        print(self.quarterTurn)
+        print(2*v/a)
+        print(self.maxTurnTime)
+        #print(self.maxTurnTime)
         self.maxTurnTheta = (self.maxTurnTime**2 * a / 2 / w)
+        #print(self.maxTurnTheta * 180 / pi)
 
         # Use 'middle point' to form quadratic
         # Make divisor smaller for more accuracy (currently ≈ 10 digits)
-        count = ceil(self.quarterTurn / 0.03)
+        count = max(ceil(self.quarterTurn / 0.03), 100)
         self.dt = self.quarterTurn / count
 
         points = []
@@ -39,8 +46,8 @@ class IntegralCalculator():
         half_dt = self.dt/2
         self.curves = []
         for i in range(count):
-            #if self.dt*i > self.maxTurnTime:
-            #    break
+            if self.dt*i > self.maxTurnTime:
+                break
             times = [self.dt*i, self.dt*i + half_dt, self.dt*(i+1)]
             xVals = [points[i*2][0], points[i*2+1][0], points[i*2+2][0]]
             #print(xVals)
@@ -52,10 +59,12 @@ class IntegralCalculator():
 
             self.curves.append((xCurve, yCurve))
 
-        self.areas = []
+        self.areas = [[0,0]]
         for i in range(count):
+            if self.dt*i > self.maxTurnTime:
+                break
             self.areas.append(
-                [(self.areas or [[0,0]])[-1][j] + half_dt\
+                [self.areas[-1][j] + half_dt\
                 * (points[i*2][j] + 4*points[i*2+1][j] + points[i*2+2][j]) / 3\
                 for j in [0,1]]
             )
@@ -95,7 +104,7 @@ class IntegralCalculator():
 
     def _getCoordFromTurnTime(self, t: float, coordType: int):
         count = int(t // self.dt)
-        displacement = self.areas[count-1][coordType]
+        displacement = self.areas[count][coordType]
         curve = self.curves[count][coordType]
         displacement += curve[0] / 3 * (t**3 - (count * self.dt)**3)\
             + curve[1] / 2 * (t**2 - (count * self.dt)**2)\
@@ -123,6 +132,7 @@ class IntegralCalculator():
     def getDrawPath(self, thetaOriginal: Angle, faceDirection: Angle, translate: list[float, float]):
         multiplier = 1 if thetaOriginal.r > 0 else -1
         theta = abs(self._checkTheta(thetaOriginal.r))
+        print(theta*180/pi)
         faceDirection = faceDirection.r
 
         if theta <= self.maxTurnTheta * 2:
@@ -130,6 +140,7 @@ class IntegralCalculator():
             theta /= 2
         else:
             # Calculate
+            print(1)
             stationaryAngle = 0 #(theta - self.maxTurnTheta * 2) * multiplier
             theta = self.maxTurnTheta
 
@@ -143,13 +154,13 @@ class IntegralCalculator():
         coords = []
         lastCoord = self._getCoordsFromTurnTheta(theta)
 
-        for sampleDegAngle in range(2 * int(thetaOriginal.d // 1)):
+        for sampleDegAngle in range(2 * int(Angle(theta, "r").d // 1)):
             coord = self._getCoordsFromTurnTheta(Angle(sampleDegAngle / 2, "d").r)
             coords.append(
                 [(coord[i] - lastCoord[i]) for i in [0,1]]
             )
-        if coords[-1] != [0,0]:
-            coords.append([0,0])
+        #if coords[-1] != [0,0]:
+        #    coords.append([0,0])
         
         #print(coords[0])
         #print(len(self.areas))

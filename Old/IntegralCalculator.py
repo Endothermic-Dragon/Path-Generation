@@ -1,6 +1,7 @@
 from math import ceil, floor, pi, sqrt, sin, cos
 from DegMath import atan2
 from DriveCharacterization import DriveCharacterization
+import matplotlib.pyplot as plt
 
 class IntegralCalculator():
     def __init__(self, robotCharacteristics: DriveCharacterization):
@@ -135,6 +136,11 @@ class IntegralCalculator():
         if int(theta // 1) != theta:
             coords.append([0,0])
 
+        x = [coords[i][0] for i in range(len(coords))]
+        y = [coords[i][1] for i in range(len(coords))]
+        plt.plot(x, y)
+        plt.show()
+
         for i in range(len(coords) - 1):
             r = (coords[i][0]**2 + coords[i][1]**2)**0.5
             arg = (atan2(coords[i][1], coords[i][0]) - theta) * pi / 180
@@ -150,3 +156,6 @@ class IntegralCalculator():
             coords[i] = [r * cos(arg) + translate.x, r * sin(arg) + translate.y]
 
         return coords
+
+a = IntegralCalculator(DriveCharacterization(1,1,2000,1))
+a.getCoords(150,0,[0,0])
